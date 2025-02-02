@@ -1,45 +1,49 @@
-import { createStore } from "redux";
+import { configureStore, createSlice } from "@reduxjs/toolkit";
 
-// const redux = require('redux');
+const initialCounterState = { counter: 0, showCounter: true };
 
-const counterReducer = (state = { counter: 0 }, action) => {
-    if (action.type === 'increment') {
-        return {
-            counter: state.counter + 1
-        };
+const counterSlice = createSlice({
+    name: 'counter',
+    initialState: initialCounterState,
+    reducers: {
+        increment(state) {
+            state.counter++;
+        },
+        decrement(state) {
+            state.counter--;
+        },
+        incrementBy2(state, action) {
+            state.counter = state.counter + action.payload;
+        },
+        decrementBy2(state, action) {
+            state.counter = state.counter - action.payload;
+        },
+        toggle(state) {
+            state.showCounter = !state.showCounter;
+        }
     }
-    else if (action.type === 'decrement') {
-        return {
-            counter: state.counter - 1
-        };
+})
+
+const initialAuthState = { isAuthenticated: false };
+
+const authSlice = createSlice({
+    name: 'authentication',
+    initialState: initialAuthState,
+    reducers: {
+        login(state) {
+            state.isAuthenticated = true;
+        },
+        logout(state) {
+            state.isAuthenticated = false;
+        }
     }
-    else if (action.type === 'incrementby5') {
-        return {
-            counter: state.counter + 5
-        };
-    }
-    else if (action.type === 'decrementby5') {
-        return {
-            counter: state.counter - 5
-        };
-    }
-    return state;
-}
+})
 
-const store = createStore(counterReducer);
+const store = configureStore({
+    reducer: { counter: counterSlice.reducer, auth: authSlice.reducer },
+});
 
-// const counterSubscriber = () => {
-//     const latestState = store.getState();
-//     console.log(latestState);
-// }
-
-// store.subscribe(counterSubscriber);
-
-// store.dispatch({ type: 'increment' });
-// store.dispatch({ type: 'increment' });
-// store.dispatch({ type: 'increment' });
-// store.dispatch({ type: 'decrement' });
-// store.dispatch({ type: 'incrementby2' });
-// store.dispatch({ type: 'decrementby2' });
+export const counterActions = counterSlice.actions;
+export const authActions = authSlice.actions;
 
 export default store;
